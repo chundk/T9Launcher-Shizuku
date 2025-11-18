@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">T9启动器</string>
+    <string name="app_name">T9 启动器</string>
     <string name="setting">设置</string>
     <string name="app_info">应用信息</string>
     <string name="copy_package_name">复制包名</string>
@@ -72,4 +72,38 @@
     <string name="sakura_theme">樱花色</string>
     <string name="pure_black_dark_theme">纯黑主题</string>
     <string name="pure_black_dark_theme_summary">当深色主题启用时使用纯黑主题</string>
+
+    <string name="shizuku">Shizuku</string>
+    <string name="shizuku_permission">Shizuku 提权</string>
+    <string name="shizuku_permission_description">Shizuku 权限</string>
+    <string name="shizuku_permission_granted">权限已授予</string>
+    <string name="shizuku_not_available">Shizuku 服务不可用</string>
+
+    <string name="need_shizuku_permission">需要 Shizuku 提权</string>
+
+    <string name="enable_package_receiver">监听 App 状态变化</string>
+    <string name="enable_package_receiver_description">监听 App 安装、卸载、更新状态变化</string>
+    <string name="package_receiver_enabled">监听已启用</string>
+    <string name="package_receiver_disabled">监听已禁用</string>
+
+    <string name="refactor_database">重构数据库</string>
+    <string name="refactor_database_description">清除数据库并重新构建应用列表</string>
+    <string name="refactor_database_confirm_title">确认重构数据库</string>
+    <string name="refactor_database_confirm_message">此操作将清除所有应用数据并重新构建数据库，应用将退出。是否继续？</string>
+    <string name="database_cleared_message">数据库已清除，应用退出！</string>
+    <string name="database_clear_failed">数据库清除失败</string>
+    <string name="database_clear_confirm">确认清除</string>
+    <string name="database_clear_cancel">取消清除</string>
+
+    <string name="app_start_failed">启动失败~</string>
+    <string name="app_start_failed_params">启动参数错误</string>
+    <string name="app_enabled">App 已启用</string>
+    <string name="app_disabled">App 已禁用</string>
+
+    <string name="operation_failed">操作失败</string>
+
+    <string name="set_app_state">启用 / 禁用</string>
+
+    <string name="force_stop_app">强制停止</string>
+    <string name="force_stop_success">成功执行强制停止</string>
 </resources>

@@ -230,7 +230,7 @@ fun HomeScreen() {
                                     AppItem(
                                         app = apps[i],
                                         onClick = {
-                                            if (apps[i].start(context)) {
+                                            if (apps[i].startHelperPack(context)) {
                                                 viewModel.updateStartCount(apps[i])
                                                 searchText = ""
                                                 viewModel.searchApp("")
@@ -312,7 +312,7 @@ fun HomeScreen() {
                                 if (text.toInt() > 0) {
                                     val appInfo = appMap[appConfig.shortcutConfig[text.toInt() - 1]]
                                     if (appInfo != null) {
-                                        if (appInfo.start(context)) {
+                                        if (appInfo.startHelperPack(context)) {
                                             searchText = ""
                                             viewModel.searchApp("")
                                             (context as? Activity)?.moveTaskToBack(true)

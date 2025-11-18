@@ -1,5 +1,8 @@
 package com.h3110w0r1d.t9launcher.data.app
 
+import android.graphics.drawable.Drawable
+
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
@@ -13,6 +16,7 @@ import com.h3110w0r1d.t9launcher.data.icon.IconManager
 import com.h3110w0r1d.t9launcher.utils.DBHelper
 import com.h3110w0r1d.t9launcher.utils.ImageUtil
 import com.h3110w0r1d.t9launcher.utils.PinyinUtil
+import com.h3110w0r1d.t9launcher.utils.ShizukuManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -157,10 +161,25 @@ class AppRepository(
             return null
         }
 
-        val appName = resolveInfo.loadLabel(packageManager).toString()
+        val appName: String
+        if (updateIcon) appName = resolveInfo.loadLabel(packageManager).toString()
+        else appName = packageInfo.applicationInfo?.loadLabel(packageManager)?.toString() ?: packageName
+        
         var appIcon = iconManager.getIcon(componentId)?.asImageBitmap()
-        if (updateIcon || appIcon == null) {
-            val iconDrawable = resolveInfo.loadIcon(packageManager)
+        if (appIcon == null) {
+            // 使用安全调用并提供默认Android图标作为备选
+             val iconDrawable: Drawable = try {
+                 if(updateIcon) {
+                     resolveInfo.loadIcon(packageManager)
+                 } else {
+                     packageManager.getApplicationIcon(packageName)
+                 }
+             } catch (e: Exception) {
+                 // 使用默认Android图标
+                 android.R.drawable.sym_def_app_icon.let {
+                     context.resources.getDrawable(it, null)
+                 }
+             }
             val iconBitmap = ImageUtil.drawable2IconBitmap(iconDrawable)
             iconManager.addIcon(componentId, iconBitmap)
             appIcon = iconBitmap.asImageBitmap()
@@ -174,16 +193,19 @@ class AppRepository(
         // 确定启动次数
         val startCount = startCounts?.get(componentId) ?: defaultStartCount
 
-        val appInfo =
-            AppInfo(
-                className,
-                packageName,
-                appName,
-                startCount,
-                appIcon,
-                isSystemApp,
-                searchData,
-            )
+        // 检查应用是否已启用 - 使用统一方法
+                val isEnabled = ShizukuManager.checkAppEnabled(context, packageName)
+                
+                val appInfo = AppInfo(
+                    className,
+                    packageName,
+                    appName,
+                    startCount,
+                    appIcon,
+                    isSystemApp,
+                    searchData,
+                    isEnabled,
+                )
 
         val insertData: List<Any> =
             listOf(
@@ -236,8 +258,10 @@ class AppRepository(
                     e.printStackTrace()
                     continue
                 }
-                val appInfo =
-                    AppInfo(
+                // 检查应用是否已启用 - 使用统一方法
+                val isEnabled = ShizukuManager.checkAppEnabled(context, packageName)
+                    
+                    val appInfo = AppInfo(
                         className,
                         packageName,
                         appName,
@@ -245,6 +269,7 @@ class AppRepository(
                         appIcon,
                         isSystemApp,
                         searchData,
+                        isEnabled,
                     )
                 resultMap[componentId] = appInfo
                 result.add(appInfo)
@@ -264,19 +289,26 @@ class AppRepository(
         withContext(Dispatchers.IO) {
             val componentIds = mutableListOf<String>()
             val packageManager = context.packageManager
-            val resolveInfoList =
+            // 首先查询所有启动器活动
+            val resolveInfoList = 
                 packageManager.queryIntentActivities(
                     Intent(
                         Intent.ACTION_MAIN,
                         null,
                     ).addCategory(Intent.CATEGORY_LAUNCHER),
-                    0,
+                    PackageManager.MATCH_DISABLED_COMPONENTS,
                 )
+
             for (resolveInfo in resolveInfoList) {
                 val activityInfo = resolveInfo.activityInfo
-                val componentId = "${activityInfo.packageName}/${activityInfo.name}"
-                componentIds.add(componentId)
+                //if(activityInfo != null && activityInfo.isEnabled){
+                     val packageName = activityInfo.packageName
+                    // 添加组件ID到列表中
+                    val componentId = "$packageName/${activityInfo.name}"
+                    componentIds.add(componentId)
+               // }
             }
+
             val cursor = queryAllApps()
             val needRemove = mutableListOf<Array<String>>()
             val startCounts: HashMap<String, Int> = HashMap()
@@ -297,10 +329,18 @@ class AppRepository(
                 deleteApp(name[0], name[1])
             }
 
+            val packageNames = mutableSetOf<String>()
             val result = mutableListOf<AppInfo>()
             val resultMap = HashMap<String, AppInfo>()
             val insertOrUpdateList = mutableListOf<List<Any>>()
             for (resolveInfo in resolveInfoList) {
+                val activityInfo = resolveInfo.activityInfo
+               // val process_ = activityInfo != null && activityInfo.isEnabled
+               // if(!process_) continue
+               
+                 val pkgName = resolveInfo.activityInfo.packageName
+                  if (!packageNames.add(pkgName)) continue
+                  
                 val processResult =
                     processResolveInfo(
                         resolveInfo = resolveInfo,
@@ -311,11 +351,11 @@ class AppRepository(
                     )
 
                 if (processResult != null) {
-                    val componentId =
-                        "${resolveInfo.activityInfo.packageName}/${resolveInfo.activityInfo.name}"
-                    insertOrUpdateList.add(processResult.insertData)
-                    resultMap[componentId] = processResult.appInfo
-                    result.add(processResult.appInfo)
+                        val componentId =
+                            "${resolveInfo.activityInfo.packageName}/${resolveInfo.activityInfo.name}"
+                        insertOrUpdateList.add(processResult.insertData)
+                        resultMap[componentId] = processResult.appInfo
+                        result.add(processResult.appInfo)
                 }
             }
             // 对应用列表进行排序
@@ -364,7 +404,7 @@ class AppRepository(
                         addCategory(Intent.CATEGORY_LAUNCHER)
                         setPackage(packageName)
                     }
-                val resolveInfoList = packageManager.queryIntentActivities(intent, 0)
+                val resolveInfoList = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
 
                 val insertOrUpdateList = mutableListOf<List<Any>>()
                 val newApps = mutableListOf<AppInfo>()
@@ -458,7 +498,7 @@ class AppRepository(
                         addCategory(Intent.CATEGORY_LAUNCHER)
                         setPackage(packageName)
                     }
-                val resolveInfoList = packageManager.queryIntentActivities(intent, 0)
+                val resolveInfoList = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
 
                 val insertOrUpdateList = mutableListOf<List<Any>>()
                 val updatedApps = mutableListOf<AppInfo>()

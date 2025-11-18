@@ -21,6 +21,18 @@ gradle.startParameter.taskNames.forEach { taskName ->
 android {
     namespace = "com.h3110w0r1d.t9launcher"
     compileSdk = 36
+    
+    signingConfigs {
+        create("release") {
+            // 使用已创建的密钥库
+            storeFile = file("${rootProject.projectDir}/keystore/t9_key.jks")
+            // 由于在密钥库创建时已设置密码，请在构建时使用环境变量提供密码
+            // 提供回退值以避免构建失败
+            storePassword = System.getenv("KEYSTORE_PASSWORD") ?: "T9Launcher"
+            keyAlias = "t9" // 这是您创建密钥库时使用的别名
+            keyPassword = System.getenv("KEY_PASSWORD") ?: "T9Launcher"
+        }
+    }
 
     defaultConfig {
         applicationId = "com.h3110w0r1d.t9launcher"
@@ -37,7 +49,8 @@ android {
             isEnable = !isBundleTask
             isUniversalApk = true
             reset()
-            include("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
+            // 仅生成universal版本
+            include("universal")
         }
     }
 
@@ -48,6 +61,9 @@ android {
             @Suppress("UnstableApiUsage")
             vcsInfo.include = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
+            
+            // 使用签名配置
+            signingConfig = signingConfigs.getByName("release")
             packaging {
                 resources {
                     excludes += "META-INF/androidx/**"
@@ -98,6 +114,7 @@ android {
 
 dependencies {
     implementation("androidx.activity:activity-compose:1.11.0")
+
     implementation("androidx.constraintlayout:constraintlayout-compose:1.1.1")
     implementation("androidx.core:core-ktx:1.17.0")
     implementation("androidx.datastore:datastore-preferences:1.1.7")
@@ -113,7 +130,19 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-text")
-
+    
+    // Lifecycle dependencies
+    implementation("androidx.lifecycle:lifecycle-process:2.9.4")
+    
+    // Shizuku
+    implementation("dev.rikka.shizuku:api:13.1.5")
+    implementation("dev.rikka.shizuku:provider:13.1.5")
+    // 添加 shizuku-hidden-api-stub 模块作为项目依赖
+    // 仅在编译时使用，不包含在APK中
+    compileOnly(project(":shizuku-hidden-api-stub"))
+    // 添加 AndroidHiddenApiBypass 库（仅编译时）
+    implementation("org.lsposed.hiddenapibypass:hiddenapibypass:+")
+    
     implementation("com.google.dagger:hilt-android:2.57.2")
     kapt("com.google.dagger:hilt-compiler:2.57.2")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")

@@ -1,6 +1,7 @@
 package com.h3110w0r1d.t9launcher.ui.screen
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.widget.Toast
 import androidx.compose.foundation.clickable
@@ -20,10 +21,13 @@ import androidx.compose.material.icons.outlined.Book
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.InvertColors
 import androidx.compose.material.icons.outlined.Keyboard
+import androidx.compose.material.icons.outlined.Cached
+import androidx.compose.material.icons.outlined.Storage
 import androidx.compose.material.icons.outlined.LayersClear
 import androidx.compose.material.icons.outlined.Merge
 import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -33,10 +37,12 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Button
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
@@ -44,6 +50,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.layout.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -52,12 +60,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.core.net.toUri
+
+import com.h3110w0r1d.t9launcher.App
 import com.h3110w0r1d.t9launcher.BuildConfig
 import com.h3110w0r1d.t9launcher.R
 import com.h3110w0r1d.t9launcher.data.config.LocalAppConfig
 import com.h3110w0r1d.t9launcher.model.LocalGlobalViewModel
 import com.h3110w0r1d.t9launcher.ui.LocalNavController
 import com.h3110w0r1d.t9launcher.ui.theme.getPrimaryColorMap
+import com.h3110w0r1d.t9launcher.utils.DBHelper
+import com.h3110w0r1d.t9launcher.utils.ShizukuManager
+
 
 @SuppressLint("ShowToast")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -100,6 +113,11 @@ fun SettingScreen() {
         )
     val themeColorKeys = themeColorNamesMap.keys.toList()
     val scrollState = rememberScrollState()
+    
+    // Shizuku权限控制
+    val shizukuManager = remember { ShizukuManager.getInstance() }
+    var hasShizukuPermission by remember { mutableStateOf(shizukuManager.hasPermission) }
+    var isShizukuAvailable by remember { mutableStateOf(shizukuManager.isShizukuAvailable()) }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -137,6 +155,37 @@ fun SettingScreen() {
                     )
                 },
             )
+            
+            // PackageReceiver控制开关
+            val context = LocalContext.current
+            val app = context.applicationContext as App
+            var isPackageReceiverEnabled by remember {
+                mutableStateOf(app.isPackageReceiverEnabled())
+            }
+            
+            SettingItem(
+                imageVector = Icons.Outlined.Cached,
+                title = stringResource(R.string.enable_package_receiver),
+                description = stringResource(R.string.enable_package_receiver_description),
+                trailingContent = {
+                    Switch(
+                        checked = isPackageReceiverEnabled,
+                        onCheckedChange = null,
+                    )
+                },
+                onClick = {
+                    val newValue = !isPackageReceiverEnabled
+                    app.setPackageReceiverEnabled(newValue)
+                    isPackageReceiverEnabled = newValue
+                    
+                    // 显示操作结果提示
+                    Toast.makeText(
+                        context,
+                        if (newValue) R.string.package_receiver_enabled else R.string.package_receiver_disabled,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                },
+            )
             SettingItem(
                 imageVector = Icons.Outlined.VisibilityOff,
                 title = stringResource(R.string.hide_app_list),
@@ -169,6 +218,58 @@ fun SettingScreen() {
                     )
                 },
             )
+
+            // 数据库重构设置项
+            var isRefactorDatabaseDialogVisible by remember { mutableStateOf(false) }
+            
+            SettingItem(
+                imageVector = Icons.Outlined.Storage,
+                title = stringResource(R.string.refactor_database),
+                description = stringResource(R.string.refactor_database_description),
+                onClick = {
+                    isRefactorDatabaseDialogVisible = true
+                }
+            )
+            
+            // 数据库重构确认对话框
+            if (isRefactorDatabaseDialogVisible) {
+                Dialog(onDismissRequest = {
+                    isRefactorDatabaseDialogVisible = false
+                }) {
+                    Card(
+                        colors = CardDefaults.cardColors().copy(
+                            containerColor = colorScheme.background,
+                        ),
+                        modifier = Modifier
+                            .padding(16.dp)
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            Text(text = stringResource(R.string.refactor_database_confirm_title))
+                            Text(
+                                text = stringResource(R.string.refactor_database_confirm_message),
+                                modifier = Modifier.padding(vertical = 8.dp)
+                            )
+                            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                                Button(
+                                    onClick = {
+                                        isRefactorDatabaseDialogVisible = false
+                                    },
+                                    modifier = Modifier.padding(end = 8.dp)
+                                ) {
+                                    Text(stringResource(R.string.database_clear_cancel))
+                                }
+                                Button(onClick = {
+                                    // 执行数据库清除操作
+                                    clearDatabase(context)
+                                    isRefactorDatabaseDialogVisible = false
+                                }) {
+                                    Text(stringResource(R.string.database_clear_confirm))
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
             SettingItemGroup(stringResource(R.string.appearance))
 
@@ -288,6 +389,36 @@ fun SettingScreen() {
                     )
                 },
             )
+            SettingItemGroup(stringResource(R.string.shizuku))
+            SettingItem(
+                imageVector = Icons.Outlined.Lock,
+                title = stringResource(R.string.shizuku_permission),
+                description = if (isShizukuAvailable) {
+                    if (hasShizukuPermission) stringResource(R.string.shizuku_permission_granted)
+                    else stringResource(R.string.shizuku_permission_description)
+                } else {
+                    stringResource(R.string.shizuku_not_available)
+                },
+                trailingContent = {
+                    Switch(
+                        checked = hasShizukuPermission,
+                        onCheckedChange = null,
+                        enabled = !hasShizukuPermission && isShizukuAvailable
+                    )
+                },
+                onClick = {
+                    if (isShizukuAvailable && !hasShizukuPermission) {
+                        // 请求Shizuku权限
+                        shizukuManager.addPermissionResultListener { result ->
+                            hasShizukuPermission = result
+                        }
+                        shizukuManager.checkAndRequestPermission()
+                        // 更新Shizuku可用性状态
+                        isShizukuAvailable = shizukuManager.isShizukuAvailable()
+                    }
+                },
+            )
+            
             SettingItemGroup(stringResource(R.string.about))
 
             SettingItem(
@@ -301,9 +432,19 @@ fun SettingScreen() {
             SettingItem(
                 imageVector = Icons.Outlined.Person,
                 title = stringResource(R.string.author),
-                description = "@h3110w0r1d-y",
+                description = "项目原创者 @h3110w0r1d-y",
                 onClick = {
                     val uri = "https://github.com/h3110w0r1d-y".toUri()
+                    context.startActivity(Intent(Intent.ACTION_VIEW, uri))
+                },
+            )
+
+            SettingItem(
+                imageVector = Icons.Outlined.Person,
+                title = stringResource(R.string.author),
+                description = "Shizuku 集成 @xiaokkangg",
+                onClick = {
+                    val uri = "https://github.com/chundk".toUri()
                     context.startActivity(Intent(Intent.ACTION_VIEW, uri))
                 },
             )
@@ -419,13 +560,47 @@ fun SettingItemGroup(title: String) {
     )
 }
 
+// 清除数据库并重建表，然后退出应用
+private fun clearDatabase(context: Context) {
+    try {
+        // 获取数据库实例并删除
+        val dbHelper = DBHelper(context)
+        val database = dbHelper.writableDatabase
+        database.execSQL("DROP TABLE IF EXISTS T_AppInfo")
+        // 重新创建表
+        dbHelper.onCreate(database)
+        dbHelper.close()
+        
+        // 显示Toast提示
+        Toast.makeText(
+            context,
+            context.getString(R.string.database_cleared_message),
+            Toast.LENGTH_SHORT
+        ).show()
+        
+        // 退出所有Activity
+        val intent = Intent(Intent.ACTION_MAIN)
+        intent.addCategory(Intent.CATEGORY_HOME)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        context.startActivity(intent)
+        android.os.Process.killProcess(android.os.Process.myPid())
+    } catch (e: Exception) {
+        e.printStackTrace()
+        Toast.makeText(
+            context,
+            context.getString(R.string.database_clear_failed),
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+}
+
 @Composable
 fun SettingItem(
     imageVector: ImageVector,
     title: String,
     description: String? = null,
     onClick: () -> Unit,
-    trailingContent: @Composable (() -> Unit)? = null,
+    trailingContent: @Composable (() -> Unit)? = null
 ) {
     ListItem(
         leadingContent = {
