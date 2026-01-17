@@ -2,3 +2,17 @@
 2. Optimized Theme Color
 3. Removed High Contrast Theme
 4. Optimized Pull-to-Refresh Logic
+5. Added Basic Support for Shizuku
+// 2026
+6. Further Improved Shizuku Support
+7. Optimized Shortcut Setting Logic
+8. Added Shizuku Batch Operation Functionality
+9. Added Widget Functionality (Click to Launch)
+10. Added Widget Functionality (Batch Operations)
+11. Optimized Thread Management to Avoid Blocking the Main Thread
+12. Optimized UI Effect of Grayscale Value Changes When Clicking Disabled Apps
+13. Added Batch Operation Functionality for T9 Keyboard Quick Launch
+14. Added Warning Prompts for Batch Operations on System Apps to Prevent User Errors
+15. Added Database Backup and Restore Support
+16. Added Backup Preference Options (Restore, Backup, Share)
+17. Added Option to Close T9 Keyboard Immediately After Launch

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_card_bg_dark2"
+    android:padding="3dp">
+
+    <LinearLayout
+            android:layout_alignParentTop="true"
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+        <ImageButton
+            android:id="@+id/enable_button"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@null"
+        android:contentDescription="@string/batch_enable_apps"
+            android:layout_marginStart="5dp"
+            android:src="@drawable/icon_shortcut_enable" />
+
+        <ImageButton
+            android:id="@+id/disable_button"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@null"
+        android:contentDescription="@string/batch_disable_apps"
+            android:layout_marginEnd="5dp"
+            android:src="@drawable/icon_shortcut_disable" />
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="5dp"
+        android:text="@string/batch_operations_system_apps"
+        android:textColor="@android:color/white"
+        android:textSize="12sp"
+        android:textStyle="bold" />
+
+</RelativeLayout>

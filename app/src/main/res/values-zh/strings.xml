@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">T9启动器</string>
+    <!-- 基本信息 -->
+    <string name="app_name">T9 启动器</string>
+    <string name="widget_small_description">T9 启动器（小）</string>
+    <string name="widget_large_description">T9 启动器（亮色）</string>
+    <string name="widget_large_dark_bg_description">T9 启动器（深色）</string>
+
+    <!-- 设置相关 -->
     <string name="setting">设置</string>
     <string name="app_info">应用信息</string>
     <string name="copy_package_name">复制包名</string>
@@ -10,9 +16,12 @@
     <string name="hide_system_app">隐藏系统应用</string>
     <string name="about">关于</string>
     <string name="author">作者</string>
+    <string name="author2">维护者</string>
     <string name="version">版本</string>
     <string name="hide">功能</string>
     <string name="repository">仓库</string>
+
+    <!-- 外观设置 -->
     <string name="appearance">外观</string>
     <string name="keyboard_style">键盘样式</string>
     <string name="app_list_style">应用列表样式</string>
@@ -32,6 +41,12 @@
     <string name="keyboard_bottom_padding">底部边距</string>
     <string name="app_name_size">应用名称大小</string>
     <string name="icon_corner_radius">图标圆角大小</string>
+    <string name="use_clip_for_rounded_corner">Clip 圆角</string>
+    <string name="use_clip_for_rounded_corner_description">使用 Clip 的方式实现圆角效果</string>
+    <string name="exit_application_title">退出应用</string>
+    <string name="exit_application_prompt">应用将退出以应用圆角处理的更改</string>
+    
+    <!-- 使用说明 -->
     <string name="long_click_menu">长按应用图标打开菜单。</string>
     <string name="slide_delete">滑动删除键清空输入。</string>
     <string name="long_click_show_hide">长按任意数字键显示隐藏应用。</string>
@@ -40,17 +55,24 @@
     <string name="next">下一个</string>
     <string name="back">上一个</string>
     <string name="user_guide">使用说明</string>
+
+    <!-- 快捷启动设置 -->
     <string name="shortcut_setting">快捷启动设置</string>
     <string name="shortcut_icon_size">快捷启动图标大小</string>
     <string name="shortcut_icon_opacity">快捷启动图标透明度</string>
     <string name="select_shortcut_app">选择快捷启动应用</string>
     <string name="not_set">未设置</string>
+
+    <!-- 搜索和主题设置 -->
     <string name="english_fuzzy_match">英文模糊匹配</string>
     <string name="is_highlight_search_result">高亮搜索结果</string>
     <string name="night_mode_follow_system">深色模式跟随系统</string>
     <string name="night_mode_enabled">深色模式</string>
     <string name="use_system_color">使用系统主题色</string>
     <string name="theme_color">主题色</string>
+    <string name="color_category">颜色</string>
+
+    <!-- 主题色选项 -->
     <string name="amber_theme">琥珀色</string>
     <string name="blue_theme">蓝色</string>
     <string name="blue_grey_theme">蓝灰色</string>
@@ -72,4 +94,113 @@
     <string name="sakura_theme">樱花色</string>
     <string name="pure_black_dark_theme">纯黑主题</string>
     <string name="pure_black_dark_theme_summary">当深色主题启用时使用纯黑主题</string>
+
+    <!-- Shizuku 相关 -->
+    <string name="shizuku">Shizuku</string>
+    <string name="shizuku_permission">Shizuku 提权</string>
+    <string name="shizuku_permission_description">Shizuku 权限</string>
+    <string name="shizuku_permission_granted">权限已授予</string>
+    <string name="shizuku_not_available">Shizuku 服务不可用</string>
+    <string name="shizuku_not_installed">Shizuku 未安装</string>
+    <string name="need_shizuku_permission">需要 Shizuku 提权</string>
+
+    <!-- 应用监听相关 -->
+    <string name="enable_package_receiver">监听 App 状态变化</string>
+    <string name="enable_package_receiver_description">监听 App 安装、卸载、更新状态变化</string>
+    <string name="package_receiver_enabled">监听已启用</string>
+    <string name="package_receiver_disabled">监听已禁用</string>
+
+    <!-- 数据库相关 -->
+    <string name="refactor_database">重构数据库</string>
+    <string name="refactor_database_description">清除数据库并重新构建应用列表</string>
+    <string name="refactor_database_confirm_title">确认重构数据库</string>
+    <string name="refactor_database_confirm_message">此操作将清除所有应用数据并重新构建数据库，应用将退出。是否继续？</string>
+    <string name="database_cleared_message">数据库已清除，应用退出！</string>
+    <string name="database_clear_failed">数据库清除失败</string>
+    <string name="database_clear_confirm">确认清除</string>
+    <string name="database_clear_cancel">取消清除</string>
+
+    <!-- 应用状态相关 -->
+    <string name="app_start_failed">启动失败~</string>
+    <string name="app_start_failed_params">启动参数错误</string>
+    <string name="app_enabled">App 已启用</string>
+    <string name="app_disabled">App 已禁用</string>
+    <string name="operation_failed">操作失败</string>
+    <string name="set_app_state">启用 / 禁用</string>
+    <string name="force_stop_app">强制停止</string>
+    <string name="force_stop_success">成功执行强制停止</string>
+
+    <!-- 小组件相关字符串 -->
+    <string name="widget_category">小组件</string>
+    <string name="icon_position_setting">小组件图标位置设置</string>
+    <string name="icon_position_setting_description">搜索小组件中图标的位置</string>
+    <string name="icon_position_dark_setting_description">搜索小组件中图标的位置（深色）</string>
+    
+    <!-- 图标位置设置相关字符串 -->
+    <string name="icon_position_title">选择搜索图标的位置</string>
+    <string name="icon_position_message">请选择搜索小组件中要显示搜索图标的位置</string>
+    <string name="position_left">左侧</string>
+    <string name="position_center">中间</string>
+    <string name="position_right">右侧</string>
+    
+    <!-- 备份与恢复相关字符串 -->
+    <string name="backup_restore">备份与恢复</string>
+    <string name="backup_restore_description">备份或恢复应用配置</string>
+    <string name="backup_restore_dialog_message">请选择您要执行的操作</string>
+    <string name="backup">备份</string>
+    <string name="share_backup">分享备份</string>
+    <string name="import_backup">导入备份</string>
+    <string name="backup_successful">备份成功</string>
+    <string name="backup_failed">备份失败</string>
+    <string name="backup_file_not_found">未找到备份文件</string>
+    <string name="share_failed">分享失败</string>
+    <string name="restore_successful">恢复成功，应用将退出</string>
+    <string name="restore_failed">恢复失败</string>
+    
+    <string name="finish_after_launch_title">启动后关闭</string>
+    <string name="finish_after_launch_description">启动 App 后关闭 T9 键盘</string>
+    
+     <string name="start_statistics">启动统计</string>
+    <string name="start_count_format">启动次数 %d</string>
+ 
+     <string name="backup_database">数据库备份与恢复</string>
+    <string name="backup_database_description">备份或恢复数据库文件</string>
+    <string name="backup_database_dialog_message">请选择执行数据库的操作</string>
+    <string name="backup_database_file">备份数据库文件</string>
+    <string name="restore_database_file">恢复数据库文件</string>
+    <string name="database_backup_successful">备份数据库成功</string>
+    <string name="database_backup_failed">备份数据库失败</string>
+    <string name="database_restore_successful">恢复数据库成功，应用将退出</string>
+    <string name="database_restore_failed">恢复数据库失败</string>
+    <string name="invalid_database_file">仅支持 .db 后缀名的文件</string>
+    <string name="database_backup_path">备份路径 %s</string>
+ 
+     <string name="app_list">应用列表</string>
+        <string name="app_list_configure">应用列表配置</string>
+    <string name="search_app">搜索应用</string>
+    <string name="user_apps">用户应用</string>
+    <string name="system_apps">系统应用</string>
+
+    <string name="app_list_description">配置执行批量启用、禁用时的 App 列表</string>
+    <string name="batch_operations_saved">应用列表已保存</string>
+
+    <string name="current_not_configured_app_list_cannot_perform_batch_operation">当前还未配置应用列表，无法执行批量操作</string>
+    <string name="please_select_batch_operation_for_d_apps">请选择对 %d 个%s要执行的批量操作</string>
+    <string name="batch_operations">批量操作</string>
+    <string name="batch_operations_system_apps">批量操作系统应用</string>
+    <string name="batch_operations_user_apps">批量操作用户应用</string>
+    
+    <string name="enable">启用</string>
+    <string name="disable">禁用</string>
+    <string name="batch_operations_description">批量操作通知</string>
+    <string name="batch_operation_completed_d_apps_affected">批量操作%s完成，影响了 %d 个应用</string>
+    <string name="widget_batch_operations_description">批量启用 / 禁用应用的快捷方式</string>
+    <string name="widget_batch_operations_system_description">批量启用 / 禁用系统应用的快捷方式</string>
+    
+    <string name="batch_enable_apps">批量启用应用</string>
+    <string name="batch_disable_apps">批量禁用应用</string>
+    <string name="batch_operations_dangerous_warning">操作系统应用是危险的行为，错误的操作将会导致系统无法正常启动！</string>
+    <string name="batch_operations_dangerous_confirm">我已了解风险</string>
+    <string name="batch_operations_dangerous_confirm_button">确认操作</string>
+    <string name="need_notification_permission">通知权限没有启用，无法显示批量操作通知</string>
 </resources>

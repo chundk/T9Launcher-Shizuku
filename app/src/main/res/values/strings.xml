@@ -1,5 +1,9 @@
 <resources>
     <string name="app_name">T9 Launcher</string>
+    <string name="widget_small_description">T9 small widget</string>
+    <string name="widget_large_description">T9 large widget</string>
+    <string name="widget_large_dark_bg_description">T9 large widget (dark)</string>
+  
     <string name="hide_system_app">Hide System Apps</string>
     <string name="setting">Setting</string>
     <string name="app_info">App Detail</string>
@@ -9,6 +13,7 @@
     <string name="hide_app_list">Manage Hidden Apps</string>
     <string name="about">About</string>
     <string name="author">Author</string>
+    <string name="author2">Modifier</string>
     <string name="version">Version</string>
     <string name="hide">Features</string>
     <string name="repository">Repository</string>
@@ -30,6 +35,10 @@
     <string name="keyboard_width">Keyboard Width</string>
     <string name="keyboard_bottom_padding">Bottom Padding</string>
     <string name="app_name_size">App Name Size</string>
+    <string name="use_clip_for_rounded_corner">Use Clip for Rounded Corner</string>
+    <string name="use_clip_for_rounded_corner_description">Clip for rounded corner effect</string>
+    <string name="exit_application_title">Exit Application</string>
+    <string name="exit_application_prompt">The application will exit to apply rounded corner changes</string>
     <string name="icon_corner_radius">Icon Corner Radius</string>
     <string name="long_click_menu">Long-press the app icon to open the menu.</string>
     <string name="slide_delete">Slide the backspace key to delete all.</string>
@@ -71,4 +80,108 @@
     <string name="sakura_theme">Sakura</string>
     <string name="pure_black_dark_theme">Black dark theme</string>
     <string name="pure_black_dark_theme_summary">Use the pure black theme if dark theme is enabled</string>
+    <string name="color_category">Colors</string>
+    
+    <string name="shizuku">Shizuku</string>
+    <string name="shizuku_permission">Shizuku</string>
+    <string name="shizuku_permission_description">Shizuku permission</string>
+    <string name="shizuku_permission_granted">Permission granted</string>
+    <string name="shizuku_not_available">Shizuku not available</string>
+    <string name="shizuku_not_installed">Shizuku not installed</string>
+    <string name="need_shizuku_permission">Need Shizuku permission</string>
+    <string name="enable_package_receiver">Enable app update monitor</string>
+    <string name="enable_package_receiver_description">Monitor app installation, removal, and updates</string>
+    <string name="package_receiver_enabled">Monitor enabled</string>
+    <string name="package_receiver_disabled">Monitor disabled</string>
+     
+    <string name="refactor_database">Refactor Database</string>
+    <string name="refactor_database_description">Clear database and rebuild app list</string>
+    <string name="refactor_database_confirm_title">Confirm Database Refactoring</string>
+    <string name="refactor_database_confirm_message">This operation will clear all app data and rebuild the database, the app will exit. Continue?</string>
+    <string name="database_cleared_message">Database cleared, app exited!</string>
+    <string name="database_clear_failed">Failed to clear database</string>
+    <string name="database_clear_confirm">Confirm Clear</string>
+    <string name="database_clear_cancel">Cancel Clear</string>
+    
+    <string name="app_enabled">App enabled</string>
+    <string name="app_disabled">App disabled</string>
+    <string name="app_start_failed_params">Launch params error</string>
+    <string name="app_start_failed">Launch failed~</string>
+    <string name="operation_failed">Operation failed</string>
+    <string name="force_stop_app">Force stop</string>
+    <string name="force_stop_success">Force stopped successfully</string>
+ 
+    <string name="set_app_state">Enable / Disable</string>
+    
+    <string name="widget_category">Widget</string>
+    <string name="icon_position_setting">Search Icon</string>
+    <string name="icon_position_setting_description">Customize the position of the search icon in the widget</string>
+    <string name="icon_position_dark_setting_description">Customize the position of the search icon in the widget (Dark)</string>
+
+    <!-- Icon position settings strings -->
+    <string name="icon_position_title">Search icon position</string>
+    <string name="icon_position_message">Please select the position where you want the search icon to appear in the widget</string>
+    <string name="position_left">Left</string>
+    <string name="position_center">Center</string>
+    <string name="position_right">Right</string>
+    
+    <!-- 备份与恢复相关字符串 -->
+    <string name="backup_restore">Backup &amp; Restore</string>
+    <string name="backup_restore_description">Backup or restore app configuration</string>
+    <string name="backup_restore_dialog_message">Select the operation you want to perform</string>
+    <string name="backup">Backup</string>
+    <string name="share_backup">Share Backup</string>
+    <string name="import_backup">Import Backup</string>
+    <string name="backup_successful">Backup successful</string>
+    <string name="backup_failed">Backup failed</string>
+    <string name="backup_file_not_found">Backup file not found</string>
+    <string name="share_failed">Share failed</string>
+    <string name="restore_successful">Restore successful, app will exit</string>
+    <string name="restore_failed">Restore failed</string>
+    
+    <string name="backup_database">Backup Database</string>
+    <string name="backup_database_description">Backup or restore app database</string>
+    <string name="backup_database_dialog_message">Select the operation you want to perform</string>
+    <string name="backup_database_file">Backup database file</string>
+    <string name="restore_database_file">Restore database file</string>
+    <string name="database_backup_successful">Database backup successful</string>
+    <string name="database_backup_failed">Database backup failed</string>
+    <string name="database_restore_successful">Database restore successful, app will exit</string>
+    <string name="database_restore_failed">Database restore failed</string>
+    <string name="invalid_database_file">Invalid database file, only .db files are supported</string>
+    <string name="database_backup_path">Database backed up to %s</string>
+    
+    <string name="finish_after_launch_title">Launch and Exit</string>
+    <string name="finish_after_launch_description">Close T9 keyboard after app launched</string>
+
+    <string name="apps_category">Apps</string>
+    
+    <string name="start_statistics">Start Statistics</string>
+    <string name="start_count_format">Start Count %d</string>
+    
+    <string name="app_icon">App Icon</string>
+    <string name="app_list">App List</string>
+    <string name="search_app">Search App</string>
+    <string name="user_apps">User Apps</string>
+    <string name="system_apps">System Apps</string>
+    <string name="app_list_description">Configure the app list to enable/disable</string>
+    <string name="batch_operations_saved">Apps list saved</string>
+    <string name="app_list_configure">App List Configure</string>
+    <string name="current_not_configured_app_list_cannot_perform_batch_operation">The app list is not yet configured, batch operations cannot be performed</string>
+    <string name="please_select_batch_operation_for_d_apps">Please select the batch operation to perform on %d %s</string>
+    <string name="batch_operations">Batch Operations</string>
+    <string name="batch_operations_system_apps">Batch operations for system apps</string>
+    <string name="batch_operations_user_apps">Batch operations for user apps</string>
+    <string name="enable">Enable</string>
+    <string name="disable">Disable</string>
+    <string name="batch_operations_description">Batch Operations Notification</string>
+    <string name="batch_operation_completed_d_apps_affected">Batch operation %s completed, affecting %d apps</string>
+    <string name="widget_batch_operations_description">Shortcut for batch enabling / disabling apps</string>
+    <string name="widget_batch_operations_system_description">Shortcut for batch enabling / disabling system apps</string>
+    <string name="batch_enable_apps">Batch Enable Apps</string>
+    <string name="batch_disable_apps">Batch Disable Apps</string>
+    <string name="batch_operations_dangerous_warning">Operating system apps are dangerous operations, and incorrect operations may cause the system to fail to start normally!</string>
+    <string name="batch_operations_dangerous_confirm">I have read and understood the risks</string>
+    <string name="batch_operations_dangerous_confirm_button">Confirm Operation</string>
+    <string name="need_notification_permission">Need notification permission</string>
 </resources>

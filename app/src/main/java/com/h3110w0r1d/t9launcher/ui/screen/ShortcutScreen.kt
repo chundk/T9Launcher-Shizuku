@@ -29,6 +29,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -65,6 +66,10 @@ fun ShortcutScreen() {
             items(9) { i ->
                 val componentId = appConfig.shortcutConfig.getOrNull(i) ?: ""
                 val appInfo = appMap[componentId]
+                // 检查是否是批量操作组件
+                val isBatchOperationsUsers = componentId == "com.h3110w0r1d.t9launcher/com.h3110w0r1d.t9launcher.activity.BatchOperationsActivity"
+                val isBatchOperationsSystem = componentId == "com.h3110w0r1d.t9launcher/com.h3110w0r1d.t9launcher.activity.BatchOperations4SystemOnlyActivity"
+               
                 ListItem(
                     leadingContent = {
                         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -84,7 +89,26 @@ fun ShortcutScreen() {
                                     fontSize = 20.sp,
                                 )
                             }
-                            if (appInfo != null) {
+                            
+                            if (isBatchOperationsUsers || isBatchOperationsSystem) {
+                                // 设置特殊图标
+                                val iconRes = if (isBatchOperationsUsers) {
+                                    R.drawable.icon_user_apps
+                                } else {
+                                    R.drawable.icon_system_apps
+                                }
+                                
+                                Image(
+                                    painter = painterResource(id = iconRes),
+                                    contentDescription = stringResource(R.string.batch_operations),
+                                    modifier =
+                                        Modifier
+                                            .padding(start = 8.dp)
+                                            .width(42.dp)
+                                            .aspectRatio(1f)
+                                            .clip(RoundedCornerShape(percent = 26)),
+                                )
+                            } else if (appInfo != null) {
                                 Image(
                                     bitmap = appInfo.appIcon,
                                     contentDescription = appInfo.appName,
@@ -99,14 +123,20 @@ fun ShortcutScreen() {
                         }
                     },
                     headlineContent = {
-                        if (appInfo != null) {
+                       if (isBatchOperationsUsers || isBatchOperationsSystem) {
+                            Text(stringResource(R.string.batch_operations))
+                        } else if (appInfo != null) {
                             Text(appInfo.appName)
                         } else {
                             Text(stringResource(R.string.not_set))
                         }
                     },
                     supportingContent = {
-                        if (appInfo != null) {
+                          if(isBatchOperationsUsers){
+                            Text(stringResource(R.string.batch_operations_user_apps))
+                        } else if (isBatchOperationsSystem) {
+                            Text(stringResource(R.string.batch_operations_system_apps))
+                        }  else if (appInfo != null) {
                             Text(
                                 appInfo.packageName,
                                 maxLines = 1, // 设置最大行数为1，强制文本不换行
@@ -115,7 +145,7 @@ fun ShortcutScreen() {
                         }
                     },
                     trailingContent = {
-                        if (appInfo != null) {
+                        if (appInfo != null || (isBatchOperationsUsers || isBatchOperationsSystem)) {
                             Box(modifier = Modifier.padding(vertical = 10.dp)) {
                                 Icon(
                                     imageVector = Icons.Default.Close,

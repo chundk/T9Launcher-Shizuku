@@ -2,6 +2,7 @@ package com.h3110w0r1d.t9launcher.di
 
 import android.content.Context
 import com.h3110w0r1d.t9launcher.data.app.AppRepository
+import com.h3110w0r1d.t9launcher.data.config.AppConfigManager
 import com.h3110w0r1d.t9launcher.data.icon.IconManager
 import com.h3110w0r1d.t9launcher.utils.DBHelper
 import com.h3110w0r1d.t9launcher.utils.PinyinUtil
@@ -22,5 +23,6 @@ object AppRepositoryModule {
         dbHelper: DBHelper,
         pinyinUtil: PinyinUtil,
         iconManager: IconManager,
-    ): AppRepository = AppRepository(context, dbHelper, pinyinUtil, iconManager)
+        configManager: AppConfigManager,
+    ): AppRepository = AppRepository(context, dbHelper, pinyinUtil, iconManager, configManager)
 }

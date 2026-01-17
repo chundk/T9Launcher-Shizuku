@@ -27,6 +27,7 @@ private object ConfigKeys {
     val iconHorizonPadding = floatPreferencesKey("icon_horizon_padding")
     val iconVerticalPadding = floatPreferencesKey("icon_vertical_padding")
     val iconCornerRadius = intPreferencesKey("icon_corner_radius")
+    val useClipForRoundedCorner = booleanPreferencesKey("use_clip_for_rounded_corner")
     val rowSpacing = floatPreferencesKey("row_spacing")
     val gridColumns = intPreferencesKey("grid_columns")
     val appListHeight = floatPreferencesKey("app_list_height")
@@ -55,6 +56,7 @@ private object ConfigKeys {
     // 其他键
     val isShowedOnboarding = booleanPreferencesKey("is_showed_onboarding")
     val shortcutConfig = stringPreferencesKey("shortcut_config")
+    val finishAfterLaunched = booleanPreferencesKey("finish_after_launched")
 }
 
 class AppConfigManager(
@@ -70,6 +72,7 @@ class AppConfigManager(
                             iconHorizonPadding = preferences[ConfigKeys.iconHorizonPadding] ?: 10f,
                             iconVerticalPadding = preferences[ConfigKeys.iconVerticalPadding] ?: 10f,
                             iconCornerRadius = preferences[ConfigKeys.iconCornerRadius] ?: 26,
+                            useClipForRoundedCorner = preferences[ConfigKeys.useClipForRoundedCorner] ?: true,
                             rowSpacing = preferences[ConfigKeys.rowSpacing] ?: 10f,
                             gridColumns = preferences[ConfigKeys.gridColumns] ?: 5,
                             appListHeight = preferences[ConfigKeys.appListHeight] ?: 210f,
@@ -104,6 +107,7 @@ class AppConfigManager(
                             preferences[ConfigKeys.shortcutConfig] ?: Json.encodeToString(List(9) { "\"\"" }),
                         ),
                     isConfigInitialized = true,
+                    finishAfterLaunched = preferences[ConfigKeys.finishAfterLaunched] ?: false,
                 )
             }.stateIn(
                 scope = CoroutineScope(Dispatchers.IO + SupervisorJob()),
@@ -117,6 +121,7 @@ class AppConfigManager(
             preferences[ConfigKeys.iconHorizonPadding] = config.iconHorizonPadding
             preferences[ConfigKeys.iconVerticalPadding] = config.iconVerticalPadding
             preferences[ConfigKeys.iconCornerRadius] = config.iconCornerRadius
+            preferences[ConfigKeys.useClipForRoundedCorner] = config.useClipForRoundedCorner
             preferences[ConfigKeys.rowSpacing] = config.rowSpacing
             preferences[ConfigKeys.gridColumns] = config.gridColumns
             preferences[ConfigKeys.appListHeight] = config.appListHeight
@@ -162,6 +167,12 @@ class AppConfigManager(
     suspend fun setShowedOnboarding() {
         dataStore.edit { preferences ->
             preferences[ConfigKeys.isShowedOnboarding] = true
+        }
+    }
+
+    suspend fun updateFinishAfterLaunched(enabled: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[ConfigKeys.finishAfterLaunched] = enabled
         }
     }
 }

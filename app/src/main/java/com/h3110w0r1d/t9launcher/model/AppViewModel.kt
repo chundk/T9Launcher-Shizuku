@@ -17,7 +17,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import com.h3110w0r1d.t9launcher.activity.batchOperationsDataStore
 import kotlinx.coroutines.withContext
 import java.util.Locale
 import javax.inject.Inject
@@ -115,6 +121,12 @@ class AppViewModel
         fun updateSearchConfig(config: SearchConfig) {
             viewModelScope.launch {
                 configManager.updateSearchConfig(config)
+            }
+        }
+        
+        fun updateFinishAfterLaunched(enabled: Boolean) {
+            viewModelScope.launch {
+                configManager.updateFinishAfterLaunched(enabled)
             }
         }
 

@@ -3,6 +3,13 @@ package com.h3110w0r1d.t9launcher.data.icon
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffXfermode
+import android.graphics.RectF
+import android.graphics.drawable.BitmapDrawable
+import androidx.compose.ui.graphics.asImageBitmap
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.RandomAccessFile
@@ -153,5 +160,34 @@ class IconManager(
     ) {
         icons.remove("$packageName/$className")
         isChanged = true
+    }
+
+    fun getRoundedCornerBitmap(
+        bitmap: Bitmap,
+        cornerRadius: Int,
+    ): Bitmap {
+        val output = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(output)
+        val paint = Paint().apply {
+            isAntiAlias = true
+            color = android.graphics.Color.TRANSPARENT
+        }
+        val rect = RectF(0f, 0f, bitmap.width.toFloat(), bitmap.height.toFloat())
+        val cornerRadiusPx = (cornerRadius * bitmap.width / 100f).coerceAtLeast(0f)
+        
+        android.graphics.Path().apply {
+            addRoundRect(rect, cornerRadiusPx, cornerRadiusPx, android.graphics.Path.Direction.CW)
+            canvas.clipPath(this)
+        }
+        
+        canvas.drawBitmap(bitmap, 0f, 0f, null)
+        return output
+    }
+
+    fun getRoundedCornerImageBitmap(
+        bitmap: Bitmap,
+        cornerRadius: Int,
+    ): androidx.compose.ui.graphics.ImageBitmap {
+        return getRoundedCornerBitmap(bitmap, cornerRadius).asImageBitmap()
     }
 }

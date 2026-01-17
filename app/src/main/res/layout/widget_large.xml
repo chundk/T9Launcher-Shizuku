@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/widget_card_bg"
+    android:id="@+id/widget_shape_bg"
+    android:padding="5dp"
+    android:clickable="true"
+    android:focusable="true">
+
+    <!-- 左侧放大镜图标 -->
+    <ImageView
+        android:id="@+id/widget_icon_left"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:src="@drawable/widget_magnifier_dark"
+        android:contentDescription="Left Magnifier Icon"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="18dp"
+        android:visibility="invisible" />
+
+    <!-- 中央放大镜图标 -->
+    <ImageView
+        android:id="@+id/widget_icon_center"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:src="@drawable/widget_magnifier_dark"
+        android:contentDescription="Center Magnifier Icon"
+        android:layout_centerInParent="true"
+        android:layout_marginHorizontal="4dp" />
+
+    <!-- 右侧放大镜图标 -->
+    <ImageView
+        android:id="@+id/widget_icon_right"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:src="@drawable/widget_magnifier_dark"
+        android:contentDescription="Right Magnifier Icon"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="18dp"
+        android:visibility="invisible" />
+
+</RelativeLayout>

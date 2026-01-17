@@ -8,6 +8,7 @@ data class AppListStyleConfig(
     val iconHorizonPadding: Float = 10f,
     val iconVerticalPadding: Float = 10f,
     val iconCornerRadius: Int = 26,
+    val useClipForRoundedCorner: Boolean = true,
     val rowSpacing: Float = 10f,
     val gridColumns: Int = 5,
     val appListHeight: Float = 210f,
@@ -57,4 +58,5 @@ data class AppConfig(
     val isShowedOnboarding: Boolean = false,
     val shortcutConfig: List<String> = listOf("", "", "", "", "", "", "", "", ""),
     val isConfigInitialized: Boolean = false,
+    val finishAfterLaunched: Boolean = false,
 )

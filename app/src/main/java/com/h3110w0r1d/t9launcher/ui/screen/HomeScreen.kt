@@ -2,8 +2,11 @@ package com.h3110w0r1d.t9launcher.ui.screen
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Intent
 import android.content.res.Configuration
 import android.widget.Toast
+import com.h3110w0r1d.t9launcher.activity.BatchOperationsActivity
+import com.h3110w0r1d.t9launcher.activity.BatchOperations4SystemOnlyActivity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -57,6 +60,8 @@ import com.h3110w0r1d.t9launcher.ui.LocalNavController
 import com.h3110w0r1d.t9launcher.ui.widget.AppDropdownMenu
 import com.h3110w0r1d.t9launcher.ui.widget.AppItem
 import com.h3110w0r1d.t9launcher.ui.widget.T9Keyboard
+import com.h3110w0r1d.t9launcher.utils.ShizukuManager
+import com.h3110w0r1d.t9launcher.utils.LaunchAppUtil
 
 @SuppressLint("RestrictedApi", "FrequentlyChangingValue", "ShowToast")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -84,6 +89,20 @@ fun HomeScreen() {
                 lazyGridState.firstVisibleItemScrollOffset == 0
         }
     }
+
+     // 用于调用父Activity的finish()方法来退出应用
+    fun finishActivity(context: android.content.Context) {
+        // 根据appConfig中的finishAfterLaunched配置决定是否执行finish操作
+        if (appConfig.finishAfterLaunched) {
+             // 将Context转换为Activity并调用finish()方法
+            (context as? Activity)?.finish()
+         } 
+         /* else {
+             (context as? Activity)?.moveTaskToBack(true)
+         } */
+
+    }
+
     // 监听滚动状态变化
     LaunchedEffect(lazyGridState.isScrollInProgress) {
         isScrolling =
@@ -226,22 +245,45 @@ fun HomeScreen() {
                         ) {
                             items(apps.size) { i ->
                                 var expanded by remember { mutableStateOf(false) }
+                                var refreshNewState by remember { mutableLongStateOf(0L) }
                                 Box {
                                     AppItem(
                                         app = apps[i],
                                         onClick = {
-                                            if (apps[i].start(context)) {
+                                            if (ShizukuManager.checkAppEnabled(context, apps[i].packageName)) {
                                                 viewModel.updateStartCount(apps[i])
-                                                searchText = ""
-                                                viewModel.searchApp("")
-                                                (context as? Activity)?.moveTaskToBack(true)
+                                               // searchText = ""
+                                              // viewModel.searchApp("")
+                                               
+                                                LaunchAppUtil.launchAppByPackageName(
+                                                    context,
+                                                    apps[i].packageName,
+                                                    true,
+                                                    onAppLaunched = { finishActivity(context) },
+                                                    onError = null
+                                                )
+                                            } else {
+                                                apps[i].startHelperPack(context, onAppLaunched = { finishActivity(context) })
                                             }
                                         },
                                         onLongPress = {
                                             expanded = true
                                         },
+                                        refreshNewState = refreshNewState
                                     )
-                                    AppDropdownMenu(apps[i], expanded) { expanded = it }
+                                    AppDropdownMenu(
+                                        app = apps[i],
+                                        expanded = expanded,
+                                        onExpandedChange = { expanded = it },
+                                        onAppStateChanged = {
+                                         // 重新检查应用的启用状态并更新
+                                           // val pkgName = apps[i].packageName
+                                           // apps[i].isEnabled = ShizukuManager.checkAppEnabled(context, pkgName)
+                                            
+                                            // 设置refreshNewState为当前时间，触发AppItem中的状态刷新
+                                            refreshNewState = System.currentTimeMillis()
+                                        }
+                                    )
                                 }
                             }
                         }
@@ -310,13 +352,44 @@ fun HomeScreen() {
                             }
                             else -> {
                                 if (text.toInt() > 0) {
-                                    val appInfo = appMap[appConfig.shortcutConfig[text.toInt() - 1]]
+                                    val componentId = appConfig.shortcutConfig[text.toInt() - 1]
+                                    
+                                    // 检查是否是批量操作组件
+                                    if (componentId == "com.h3110w0r1d.t9launcher/com.h3110w0r1d.t9launcher.activity.BatchOperationsActivity" || 
+                                        componentId == "com.h3110w0r1d.t9launcher/com.h3110w0r1d.t9launcher.activity.BatchOperations4SystemOnlyActivity") {
+                                        
+                                        // 添加Toast提示
+                                       // Toast.makeText(context, "启动: $componentId", Toast.LENGTH_SHORT).show()
+                                        
+                                        // 直接启动批量操作Activity
+                                        val activityClass = if (componentId.contains("BatchOperationsActivity")) {
+                                            BatchOperationsActivity::class.java
+                                        } else {
+                                            BatchOperations4SystemOnlyActivity::class.java
+                                        }
+                                        
+                                        val intent = Intent(context, activityClass)
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                        context.startActivity(intent)
+                                        
+                                        searchText = ""
+                                        viewModel.searchApp("")
+                                        (context as? Activity)?.moveTaskToBack(true)
+                                        return@T9Keyboard
+                                    }
+                                    
+                                    // 处理普通应用
+                                    val appInfo = appMap[componentId]
                                     if (appInfo != null) {
-                                        if (appInfo.start(context)) {
+                                        var enabled_ = ShizukuManager.checkAppEnabled(context, appInfo.packageName)
+                                         val startRet = if(enabled_) appInfo.start(context) else false
+                                        if (startRet) {
                                             searchText = ""
                                             viewModel.searchApp("")
                                             (context as? Activity)?.moveTaskToBack(true)
                                             return@T9Keyboard
+                                        } else {
+                                          appInfo.startHelperPack(context)
                                         }
                                     }
                                 }

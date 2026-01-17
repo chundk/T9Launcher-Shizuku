@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -157,19 +158,49 @@ fun T9Button(
             Box {
                 if (text.toInt() > 0 && !appConfig.shortcutConfig[text.toInt() - 1].isEmpty()) {
                     val componentId = appConfig.shortcutConfig[text.toInt() - 1]
-                    val appInfo = appMap[componentId]
-                    if (appInfo != null) {
+                    
+                    // 检查是否是批量操作组件
+                    if (componentId == "com.h3110w0r1d.t9launcher/com.h3110w0r1d.t9launcher.activity.BatchOperationsActivity" || 
+                        componentId == "com.h3110w0r1d.t9launcher/com.h3110w0r1d.t9launcher.activity.BatchOperations4SystemOnlyActivity") {
+                        // 设置特殊图标
+                        val iconRes = if (componentId.contains("BatchOperationsActivity")) {
+                            R.drawable.icon_user_apps
+                        } else {
+                            R.drawable.icon_system_apps
+                        }
+                        
                         Image(
-                            bitmap = appInfo.appIcon,
-                            contentDescription = appInfo.appName,
+                            painter = painterResource(id = iconRes),
+                            contentDescription = stringResource(R.string.batch_operations),
                             modifier =
                                 Modifier
                                     .width(appConfig.keyboardStyle.keyboardQSIconSize.dp)
                                     .aspectRatio(1f)
                                     .alpha(appConfig.keyboardStyle.keyboardQSIconAlpha)
-                                    .clip(RoundedCornerShape(percent = appConfig.appListStyle.iconCornerRadius))
                                     .align(Alignment.Center),
                         )
+                    } else {
+                        // 普通应用图标
+                        val appInfo = appMap[componentId]
+                        if (appInfo != null) {
+                            Image(
+                                bitmap = appInfo.appIcon,
+                                contentDescription = appInfo.appName,
+                                modifier =
+                                    Modifier
+                                        .width(appConfig.keyboardStyle.keyboardQSIconSize.dp)
+                                        .aspectRatio(1f)
+                                        .alpha(appConfig.keyboardStyle.keyboardQSIconAlpha)
+                                        .then(
+                                           // if (appConfig.appListStyle.useClipForRoundedCorner) {
+                                               Modifier.clip(RoundedCornerShape(percent = 34))
+                                          //  } else {
+                                              //  Modifier
+                                          //  }
+                                        )
+                                        .align(Alignment.Center),
+                            )
+                        }
                     }
                 }
                 Column {

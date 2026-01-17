@@ -2,9 +2,12 @@ package com.h3110w0r1d.t9launcher.ui.screen
 
 import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -22,8 +25,11 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -35,6 +41,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -56,18 +63,25 @@ fun AppListStyleScreen() {
     val appConfig = LocalAppConfig.current
     var isChanged by remember { mutableStateOf(false) }
     var showSaveDialog by remember { mutableStateOf(false) }
+    var systemExitRequired by remember { mutableStateOf(false) }
+    var showExitDialog by remember { mutableStateOf(false) }
     var previewAppListConfig by remember { mutableStateOf(appConfig.appListStyle) }
     val scrollState = rememberScrollState()
 
     LaunchedEffect(appConfig) {
         previewAppListConfig = appConfig.appListStyle
+        systemExitRequired = !appConfig.appListStyle.useClipForRoundedCorner
     }
 
     BackHandler(enabled = isChanged) {
         if (isChanged) {
             showSaveDialog = true
         } else {
-            navController.popBackStack()
+            if (systemExitRequired) {
+                showExitDialog = true
+            } else {
+                navController.popBackStack()
+            }
         }
     }
     Scaffold(
@@ -79,7 +93,11 @@ fun AppListStyleScreen() {
                         if (isChanged) {
                             showSaveDialog = true
                         } else {
-                            navController.popBackStack()
+                            if (systemExitRequired) {
+                                showExitDialog = true
+                            } else {
+                                navController.popBackStack()
+                            }
                         }
                     }) {
                         Icon(
@@ -93,6 +111,8 @@ fun AppListStyleScreen() {
                         onClick = {
                             previewAppListConfig = AppListStyleConfig()
                             isChanged = true
+                            showExitDialog = false
+                            systemExitRequired = false
                         },
                     ) {
                         Icon(Icons.Default.SettingsBackupRestore, contentDescription = null)
@@ -101,7 +121,11 @@ fun AppListStyleScreen() {
                         enabled = isChanged,
                         onClick = {
                             viewModel.updateAppListStyle(previewAppListConfig)
-                            navController.popBackStack()
+                            if (systemExitRequired) {
+                                showExitDialog = true
+                            } else {
+                                navController.popBackStack()
+                            }
                         },
                     ) {
                         Icon(
@@ -127,93 +151,139 @@ fun AppListStyleScreen() {
                         .padding(horizontal = 16.dp),
             ) {
                 StyleSettingCard(title = stringResource(R.string.grid_columns)) {
-                    Slider(
-                        value = previewAppListConfig.gridColumns.toFloat(),
-                        onValueChange = {
-                            previewAppListConfig = previewAppListConfig.copy(gridColumns = it.toInt())
-                            isChanged = true
-                        },
-                        valueRange = 2f..10f,
-                        steps = 7,
-                        modifier = Modifier.height(20.dp),
-                    )
+                    Column {
+                        Slider(
+                            value = previewAppListConfig.gridColumns.toFloat(),
+                            onValueChange = {
+                                previewAppListConfig = previewAppListConfig.copy(gridColumns = it.toInt())
+                                isChanged = true
+                            },
+                            valueRange = 2f..10f,
+                            steps = 7,
+                            modifier = Modifier.height(20.dp),
+                        )
+                        Text(text = previewAppListConfig.gridColumns.toString())
+                    }
                 }
                 StyleSettingCard(title = stringResource(R.string.app_list_height)) {
-                    Slider(
-                        value = previewAppListConfig.appListHeight,
-                        onValueChange = {
-                            previewAppListConfig = previewAppListConfig.copy(appListHeight = it)
-                            isChanged = true
-                        },
-                        valueRange = 100f..500f,
-                        modifier = Modifier.height(20.dp),
-                    )
+                    Column {
+                        Slider(
+                            value = previewAppListConfig.appListHeight,
+                            onValueChange = {
+                                previewAppListConfig = previewAppListConfig.copy(appListHeight = it)
+                                isChanged = true
+                            },
+                            valueRange = 100f..500f,
+                            modifier = Modifier.height(20.dp),
+                        )
+                        Text(text = "${String.format("%.0f", previewAppListConfig.appListHeight)} dp")
+                    }
                 }
                 StyleSettingCard(title = stringResource(R.string.icon_size)) {
-                    Slider(
-                        value = previewAppListConfig.iconSize,
-                        onValueChange = {
-                            previewAppListConfig = previewAppListConfig.copy(iconSize = it)
-                            isChanged = true
-                        },
-                        valueRange = 10f..100f,
-                        modifier = Modifier.height(20.dp),
-                    )
+                    Column {
+                        Slider(
+                            value = previewAppListConfig.iconSize,
+                            onValueChange = {
+                                previewAppListConfig = previewAppListConfig.copy(iconSize = it)
+                                isChanged = true
+                            },
+                            valueRange = 10f..100f,
+                            modifier = Modifier.height(20.dp),
+                        )
+                        Text(text = "${String.format("%.0f", previewAppListConfig.iconSize)} dp")
+                    }
                 }
                 StyleSettingCard(title = stringResource(R.string.icon_corner_radius)) {
-                    Slider(
-                        value = previewAppListConfig.iconCornerRadius.toFloat(),
-                        onValueChange = {
-                            previewAppListConfig = previewAppListConfig.copy(iconCornerRadius = it.toInt())
-                            isChanged = true
-                        },
-                        valueRange = 0f..50f,
-                        modifier = Modifier.height(20.dp),
-                    )
+                    Column {
+                        Slider(
+                            value = previewAppListConfig.iconCornerRadius.toFloat(),
+                            onValueChange = {
+                                previewAppListConfig = previewAppListConfig.copy(iconCornerRadius = it.toInt())
+                                isChanged = true
+                            },
+                            valueRange = 0f..50f,
+                            modifier = Modifier.height(20.dp),
+                        )
+                        Text(text = "${previewAppListConfig.iconCornerRadius} dp")
+                    }
                 }
+                
+                StyleSettingCard(title = stringResource(R.string.use_clip_for_rounded_corner)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = if (previewAppListConfig.useClipForRoundedCorner) "Clip" else "Bitmap",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        Switch(
+                            checked = previewAppListConfig.useClipForRoundedCorner,
+                            onCheckedChange = {
+                                previewAppListConfig = previewAppListConfig.copy(useClipForRoundedCorner = it)
+                                systemExitRequired = !it
+                                isChanged = true
+                            }
+                        )
+                    }
+                }
+                
                 StyleSettingCard(title = stringResource(R.string.app_name_size)) {
-                    Slider(
-                        value = previewAppListConfig.appNameSize,
-                        onValueChange = {
-                            previewAppListConfig = previewAppListConfig.copy(appNameSize = it)
-                            isChanged = true
-                        },
-                        valueRange = 8f..16f,
-                        modifier = Modifier.height(20.dp),
-                    )
+                    Column {
+                        Slider(
+                            value = previewAppListConfig.appNameSize,
+                            onValueChange = {
+                                previewAppListConfig = previewAppListConfig.copy(appNameSize = it)
+                                isChanged = true
+                            },
+                            valueRange = 8f..16f,
+                            modifier = Modifier.height(20.dp),
+                        )
+                        Text(text = "${String.format("%.1f", previewAppListConfig.appNameSize)} sp")
+                    }
                 }
                 StyleSettingCard(title = stringResource(R.string.icon_horizon_padding)) {
-                    Slider(
-                        value = previewAppListConfig.iconHorizonPadding,
-                        onValueChange = {
-                            previewAppListConfig = previewAppListConfig.copy(iconHorizonPadding = it)
-                            isChanged = true
-                        },
-                        valueRange = 0f..20f,
-                        modifier = Modifier.height(20.dp),
-                    )
+                    Column {
+                        Slider(
+                            value = previewAppListConfig.iconHorizonPadding,
+                            onValueChange = {
+                                previewAppListConfig = previewAppListConfig.copy(iconHorizonPadding = it)
+                                isChanged = true
+                            },
+                            valueRange = 0f..20f,
+                            modifier = Modifier.height(20.dp),
+                        )
+                        Text(text = "${String.format("%.1f", previewAppListConfig.iconHorizonPadding)} dp")
+                    }
                 }
                 StyleSettingCard(title = stringResource(R.string.icon_vertical_padding)) {
-                    Slider(
-                        value = previewAppListConfig.iconVerticalPadding,
-                        onValueChange = {
-                            previewAppListConfig = previewAppListConfig.copy(iconVerticalPadding = it)
-                            isChanged = true
-                        },
-                        valueRange = 0f..20f,
-                        modifier = Modifier.height(20.dp),
-                    )
+                    Column {
+                        Slider(
+                            value = previewAppListConfig.iconVerticalPadding,
+                            onValueChange = {
+                                previewAppListConfig = previewAppListConfig.copy(iconVerticalPadding = it)
+                                isChanged = true
+                            },
+                            valueRange = 0f..20f,
+                            modifier = Modifier.height(20.dp),
+                        )
+                        Text(text = "${String.format("%.1f", previewAppListConfig.iconVerticalPadding)} dp")
+                    }
                 }
                 StyleSettingCard(title = stringResource(R.string.row_spacing)) {
-                    Slider(
-                        value = previewAppListConfig.rowSpacing,
-                        onValueChange = {
-                            previewAppListConfig = previewAppListConfig.copy(rowSpacing = it)
-                            isChanged = true
-                        },
-                        valueRange = 0f..20f,
-                        modifier = Modifier.height(20.dp),
-                    )
+                    Column {
+                        Slider(
+                            value = previewAppListConfig.rowSpacing,
+                            onValueChange = {
+                                previewAppListConfig = previewAppListConfig.copy(rowSpacing = it)
+                                isChanged = true
+                            },
+                            valueRange = 0f..20f,
+                            modifier = Modifier.height(20.dp),
+                        )
+                        Text(text = "${String.format("%.1f", previewAppListConfig.rowSpacing)} dp")
+                    }
                 }
             }
             Card(
@@ -258,7 +328,11 @@ fun AppListStyleScreen() {
                 TextButton(onClick = {
                     viewModel.updateAppListStyle(previewAppListConfig)
                     showSaveDialog = false
-                    navController.popBackStack()
+                    if (systemExitRequired) {
+                        showExitDialog = true
+                    } else {
+                        navController.popBackStack()
+                    }
                 }) {
                     Text(stringResource(R.string.save))
                 }
@@ -276,6 +350,36 @@ fun AppListStyleScreen() {
                     Text(stringResource(R.string.cancel))
                 }
             },
+        )
+    }
+
+    // 退出应用提示对话框
+    if (showExitDialog) {
+        var countdown by remember { mutableStateOf(1) }
+        
+        LaunchedEffect(isChanged) {
+            while (countdown > 0) {
+                kotlinx.coroutines.delay(2000)
+                countdown--
+                if (countdown == 0) {
+                    System.exit(0)
+                }
+            }
+        }
+        
+        AlertDialog(
+            onDismissRequest = { },
+            title = { Text(stringResource(R.string.exit_application_title)) },
+            text = {
+                Column {
+                    Text(stringResource(R.string.exit_application_prompt))
+                    LinearProgressIndicator(
+                        progress = { 1f - countdown.toFloat() },
+                        modifier = Modifier.padding(top = 16.dp)
+                    )
+                }
+            },
+            confirmButton = { },
         )
     }
 }

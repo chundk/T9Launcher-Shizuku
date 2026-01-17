@@ -123,59 +123,74 @@ fun KeyboardStyleScreen() {
                         .padding(horizontal = 16.dp),
             ) {
                 StyleSettingCard(title = stringResource(R.string.keyboard_height)) {
-                    Slider(
-                        value = previewKeyboardConfig.keyboardButtonHeight,
-                        onValueChange = {
-                            previewKeyboardConfig = previewKeyboardConfig.copy(keyboardButtonHeight = it)
-                            isChanged = true
-                        },
-                        valueRange = 30f..90f,
-                        modifier = Modifier.height(20.dp),
-                    )
+                    Column {
+                        Slider(
+                            value = previewKeyboardConfig.keyboardButtonHeight,
+                            onValueChange = {
+                                previewKeyboardConfig = previewKeyboardConfig.copy(keyboardButtonHeight = it)
+                                isChanged = true
+                            },
+                            valueRange = 30f..90f,
+                            modifier = Modifier.height(20.dp),
+                        )
+                        Text(text = "${String.format("%.0f", previewKeyboardConfig.keyboardButtonHeight)} dp")
+                    }
                 }
                 StyleSettingCard(title = stringResource(R.string.keyboard_width)) {
-                    Slider(
-                        value = previewKeyboardConfig.keyboardWidth,
-                        onValueChange = {
-                            previewKeyboardConfig = previewKeyboardConfig.copy(keyboardWidth = it)
-                            isChanged = true
-                        },
-                        valueRange = .5f..1f,
-                        modifier = Modifier.height(20.dp),
-                    )
+                    Column {
+                        Slider(
+                            value = previewKeyboardConfig.keyboardWidth,
+                            onValueChange = {
+                                previewKeyboardConfig = previewKeyboardConfig.copy(keyboardWidth = it)
+                                isChanged = true
+                            },
+                            valueRange = .5f..1f,
+                            modifier = Modifier.height(20.dp),
+                        )
+                        Text(text = "${String.format("%.0f", previewKeyboardConfig.keyboardWidth * 100)}%")
+                    }
                 }
                 StyleSettingCard(title = stringResource(R.string.keyboard_bottom_padding)) {
-                    Slider(
-                        value = previewKeyboardConfig.keyboardBottomPadding,
-                        onValueChange = {
-                            previewKeyboardConfig = previewKeyboardConfig.copy(keyboardBottomPadding = it)
-                            isChanged = true
-                        },
-                        valueRange = 0f..100f,
-                        modifier = Modifier.height(20.dp),
-                    )
+                    Column {
+                        Slider(
+                            value = previewKeyboardConfig.keyboardBottomPadding,
+                            onValueChange = {
+                                previewKeyboardConfig = previewKeyboardConfig.copy(keyboardBottomPadding = it)
+                                isChanged = true
+                            },
+                            valueRange = 0f..100f,
+                            modifier = Modifier.height(20.dp),
+                        )
+                        Text(text = "${String.format("%.0f", previewKeyboardConfig.keyboardBottomPadding)} dp")
+                    }
                 }
                 StyleSettingCard(title = stringResource(R.string.shortcut_icon_size)) {
-                    Slider(
-                        value = previewKeyboardConfig.keyboardQSIconSize,
-                        onValueChange = {
-                            previewKeyboardConfig = previewKeyboardConfig.copy(keyboardQSIconSize = it)
-                            isChanged = true
-                        },
-                        valueRange = 20f..80f,
-                        modifier = Modifier.height(20.dp),
-                    )
+                    Column {
+                        Slider(
+                            value = previewKeyboardConfig.keyboardQSIconSize,
+                            onValueChange = {
+                                previewKeyboardConfig = previewKeyboardConfig.copy(keyboardQSIconSize = it)
+                                isChanged = true
+                            },
+                            valueRange = 20f..80f,
+                            modifier = Modifier.height(20.dp),
+                        )
+                        Text(text = "${String.format("%.0f", previewKeyboardConfig.keyboardQSIconSize)} dp")
+                    }
                 }
                 StyleSettingCard(title = stringResource(R.string.shortcut_icon_opacity)) {
-                    Slider(
-                        value = previewKeyboardConfig.keyboardQSIconAlpha,
-                        onValueChange = {
-                            previewKeyboardConfig = previewKeyboardConfig.copy(keyboardQSIconAlpha = it)
-                            isChanged = true
-                        },
-                        valueRange = 0f..1f,
-                        modifier = Modifier.height(20.dp),
-                    )
+                    Column {
+                        Slider(
+                            value = previewKeyboardConfig.keyboardQSIconAlpha,
+                            onValueChange = {
+                                previewKeyboardConfig = previewKeyboardConfig.copy(keyboardQSIconAlpha = it)
+                                isChanged = true
+                            },
+                            valueRange = 0f..1f,
+                            modifier = Modifier.height(20.dp),
+                        )
+                        Text(text = "${String.format("%.0f", previewKeyboardConfig.keyboardQSIconAlpha * 100)}%")
+                    }
                 }
             }
             Card(

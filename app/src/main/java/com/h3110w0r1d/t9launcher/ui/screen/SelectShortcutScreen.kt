@@ -33,18 +33,60 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import android.content.Context
+import android.content.Intent
+import android.app.NotificationManager
+import android.os.Build
+import android.widget.Toast
 import com.h3110w0r1d.t9launcher.R
+import com.h3110w0r1d.t9launcher.activity.BatchOperationsSystemConfirmActivity
+import com.h3110w0r1d.t9launcher.activity.checkDangerousConfirmStatus
+import com.h3110w0r1d.t9launcher.data.app.AppInfo
 import com.h3110w0r1d.t9launcher.model.LocalGlobalViewModel
 import com.h3110w0r1d.t9launcher.ui.LocalNavController
+import com.h3110w0r1d.t9launcher.utils.LaunchAppUtil
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SelectShortcutScreen(index: Int) {
     val navController = LocalNavController.current!!
     val viewModel = LocalGlobalViewModel.current
+    val context = LocalContext.current
     val hideAppList by viewModel.hideAppList.collectAsState()
+    
+    // 创建批量操作列表的数据类
+    data class BatchOperationItem(
+        val className: String,
+        val packageName: String,
+        val appName: Int, // 使用资源ID
+        val iconRes: Int // 使用资源ID
+    )
+    
+    // 创建批量操作列表
+    val batchOperationItems = remember {
+        listOf(
+            // BatchOperationsConfigureActivity
+            BatchOperationItem(
+                className = "com.h3110w0r1d.t9launcher.activity.BatchOperationsActivity",
+                packageName = "com.h3110w0r1d.t9launcher",
+                appName = R.string.batch_operations_user_apps,
+                iconRes = R.drawable.icon_user_apps
+            ),
+            // BatchOperations4SystemOnlyActivity
+            BatchOperationItem(
+                className = "com.h3110w0r1d.t9launcher.activity.BatchOperations4SystemOnlyActivity",
+                packageName = "com.h3110w0r1d.t9launcher",
+                appName = R.string.batch_operations_system_apps,
+                iconRes = R.drawable.icon_system_apps
+            )
+        )
+    }
     var searchText by remember { mutableStateOf("") }
     var isSearching by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
@@ -135,6 +177,74 @@ fun SelectShortcutScreen(index: Int) {
         },
     ) { innerPadding ->
         LazyColumn(contentPadding = innerPadding) {
+            // 添加批量操作列表
+            items(batchOperationItems.size) { i ->
+                val item = batchOperationItems[i]
+                ListItem(
+                    leadingContent = {
+                        Image(
+                            painter = painterResource(id = item.iconRes),
+                            contentDescription = stringResource(id = item.appName),
+                            modifier =
+                                Modifier
+                                    .width(44.dp)
+                                    .aspectRatio(1f)
+                                    .clip(RoundedCornerShape(percent = 26)),
+                        )
+                    },
+                    headlineContent = { Text(stringResource(id = item.appName)) },
+                    supportingContent = { Text(item.packageName) },
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .clickable(
+                                enabled = true,
+                                onClick = {
+                                        // 创建componentId
+                                        val componentId = "${item.packageName}/${item.className}"
+                                        
+                                        // 检查是否是BatchOperations4SystemOnlyActivity
+                                        if (componentId.contains("BatchOperations4SystemOnlyActivity")) {
+                                            // 检查DANGEROUS_CONFIRM_KEY的状态
+                                            checkDangerousConfirmStatus(context) {
+                                                if (it) {
+                                                    // 检查是否有通知权限
+                                                    val hasNotificationPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                                        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                                                        notificationManager.areNotificationsEnabled()
+                                                    } else {
+                                                        true // Android 12及以下默认有通知权限
+                                                    }
+                                                    
+                                                    if (hasNotificationPermission) {
+                                                        // 用户已经确认过且有权限，直接设置快捷方式
+                                                        viewModel.setQuickStartApp(index, componentId)
+                                                        navController.popBackStack()
+                                                    } else {
+                                                        // 权限不足，发出震动与Toast
+                                                        LaunchAppUtil.vibrate(context, 300)
+                                                        Toast.makeText(context, context.getString(R.string.need_notification_permission), Toast.LENGTH_LONG).show()
+                                                    }
+                                                    
+                                                } else {
+                                                    // 用户未确认过，启动确认界面
+                                                    val intent = Intent(context, BatchOperationsSystemConfirmActivity::class.java)
+                                                    intent.putExtra(BatchOperationsSystemConfirmActivity.EXTRA_SHOW_CONFIRMATION_ONLY, true)
+                                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                                    context.startActivity(intent)
+                                                }
+                                            }
+                                        } else {
+                                            // 普通组件，直接设置快捷方式
+                                            viewModel.setQuickStartApp(index, componentId)
+                                            navController.popBackStack()
+                                        }
+                                    },
+                            ),
+                )
+            }
+            
+            // 添加普通应用列表
             items(hideAppList.size) { i ->
                 ListItem(
                     leadingContent = {
