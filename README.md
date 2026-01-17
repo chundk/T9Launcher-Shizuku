@@ -1,12 +1,11 @@
 <div align="center">
-  <img src="./image/icon.png" alt="T9启动器" width="128" height="128">
-  <h1>T9启动器</h1>
+  <img src="./app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" alt="T9启动器" width="128" height="128">
+  <h1>T9 启动器 Shizuku 版本</h1>
 
-[![GitHub release](https://img.shields.io/github/v/release/h3110w0r1d-y/T9Launcher)](https://github.com/h3110w0r1d-y/T9Launcher/releases)
+[![GitHub release](https://img.shields.io/github/v/release/h3110w0r1d-y/T9Launcher)](https://github.com/chundk/T9Launcher-Shizuku/releases/tag/release)
 [![CI/CD](https://github.com/h3110w0r1d-y/T9Launcher/actions/workflows/release.yml/badge.svg)](https://github.com/h3110w0r1d-y/T9Launcher/actions/workflows/release.yml)
 ![Android](https://img.shields.io/badge/Android-8.0%2B-blue)
 ![License](https://img.shields.io/github/license/h3110w0r1d-y/T9Launcher)
-![GitHub stars](https://img.shields.io/github/stars/h3110w0r1d-y/T9Launcher?style=social)
 </div>
 
 ---
@@ -18,16 +17,36 @@
 
 ## 项目背景
 
-习惯了氢OS的上划九键搜索，换到 ColorOS 后虽然可以下划搜索，但是不带九键键盘、内容冗杂、体验很差。其他替代品大多不支持全拼，搜索速度慢，所以自己造一个。
+*原项目是一个完成度非常高的 T9 启动器，基于新颖的技术栈实现，具有很好的框架基础，因此在此基础上开发更多功能更加容易，由此为其深度加入了完整的 Shizuku 支持
+
+提供启用、禁用、暂停的常用 Shizuku 功能访问支持
+
+加入了亮色、暗色的【大搜索框】Widget 支持，仿照经典的【搜索 Lite】而设计
+
+加入了【放大镜】单图标的 Widget 支持
+
+提供了完整的数据库 .db 的备份与恢复（主要用于启动次数统计页面）
+
+提供了完整的设置备份、恢复功能（换机更加方便）
+
+提供了【批量操作】启用、禁用功能
+
+为【批量操作】提供了简单的 App 列表加入、移除功能
+
+为【批量操作】设计了系统与用户 App 的分类
+
+为【批量操作】系统 App 加入了危险警告支持
+
+为【批量操作】加入了长按 T9 按钮后快捷启动的功能
+
+为【批量操作】加入了 Widget 支持
+
+优化了一些子线程类的操作
+
 
 ## 安装应用
 
-   - [![Get it on Play Store](image/google-play-badges.svg)](https://play.google.com/store/apps/details?id=com.h3110w0r1d.t9launcher)
-
-   - [Latest Release](https://github.com/h3110w0r1d-y/T9Launcher/releases/latest)
-
-   > 关于 Xposed 版本：~~借助Xposed实现应用保活，保证每次使用时不用等待加载应用列表。Play商店版本无Xposed功能。~~
-   > 已经把保活功能单独做成了Xposed模块：https://github.com/h3110w0r1d-y/phoenix
+   - [Latest Release](https://github.com/chundk/T9Launcher-Shizuku/releases/tag/release)
 
 ## 主要功能
 
