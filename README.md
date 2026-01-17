@@ -2,8 +2,6 @@
   <img src="./app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" alt="T9启动器" width="128" height="128">
   <h1>T9 启动器 Shizuku 版本</h1>
 
-[![GitHub release](https://img.shields.io/github/v/release/h3110w0r1d-y/T9Launcher)](https://github.com/chundk/T9Launcher-Shizuku/releases/tag/release)
-[![CI/CD](https://github.com/h3110w0r1d-y/T9Launcher/actions/workflows/release.yml/badge.svg)](https://github.com/h3110w0r1d-y/T9Launcher/actions/workflows/release.yml)
 ![Android](https://img.shields.io/badge/Android-8.0%2B-blue)
 ![License](https://img.shields.io/github/license/h3110w0r1d-y/T9Launcher)
 </div>
